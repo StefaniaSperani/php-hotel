@@ -51,6 +51,35 @@ $hotels = [
 ];
 
 
+if ((isset($_GET['parking']) && !empty($_GET['parking'])) || (isset($_GET['vote']) && !empty($_GET['vote']))) {
+    $parking = $_GET ? $_GET['parking'] : '';
+    $vote = $_GET ? $_GET['vote'] : '';
+    $hotelsTemp = [];
+    foreach ($hotels as $hotel) {
+        if ($hotel['parking'] == true && $parking == 'true') {
+            $hotelsTemp[] = $hotel;
+            if ($_GET['vote']) {
+                $hotelsTemp = array_filter($hotelsTemp, fn($vote) => $vote['vote'] >= $_GET['vote']);
+            }
+            ;
+        } elseif ($hotel['parking'] == false && $parking == 'false') {
+            $hotelsTemp[] = $hotel;
+            if ($_GET['vote']) {
+                $hotelsTemp = array_filter($hotelsTemp, fn($vote) => $vote['vote'] >= $_GET['vote']);
+            }
+            ;
+        } else {
+            $hotelsTemp[] = $hotels;
+        }
+        ;
+    }
+    $hotels = $hotelsTemp;
+    //var_dump($hotels);
+}
+;
+
+
+
 ?>
 
 
@@ -74,6 +103,16 @@ $hotels = [
     <main>
         <div class="container">
             <h1 class="py-3 text-center text-capitalize">Our Hotels <i class="fa-solid fa-star fa-lg"></i></h1>
+
+            <form action="index.php" method="GET">
+                <select class="form-select w-25 mb-3" name="parking" id="parking">
+                    <option selected value="">Select parking options</option>
+                    <option value="true" name="true">Hotel with parking</option>
+                    <option value="false" name="false">Hotel without parking</option>
+                </select>
+                <input type="number" name="vote" value="vote" min="1" max="5" step="1"> </br>
+                <button type="submit" class="btn btn-dark my-3"><i class="fa-solid fa-magnifying-glass"></i></button>
+            </form>
 
             <table class="table table-dark table-striped text-capitalize">
                 <thead>
